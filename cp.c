@@ -13,6 +13,15 @@ char* strcats(char* destination, char* source){
 	}
 	return destination;
 }
+char* strcat(char* s1, const char* s2){
+  char* b = s1;
+
+  while (*s1) ++s1;
+  while (*s2) *s1++ = *s2++;
+  *s1 = 0;
+
+  return b;
+}
 char* fmtname(char *path){
 	static char buf[DIRSIZ+1];
 	char *p;
@@ -27,7 +36,7 @@ char* fmtname(char *path){
 }
 
 int cpFile(char* source, char* destination){
-	char buf[10000];
+	char bufs[10000];
 	int sourceFD, destinationFD, in,out;
 
 	
@@ -41,9 +50,9 @@ int cpFile(char* source, char* destination){
 		return 0;
 	}
 
-	while ((in = read(sourceFD, buf, sizeof(buf))) > 0) {
+	while ((in = read(sourceFD, bufs, sizeof(bufs))) > 0) {
 		//printf(1,"%c",in);
-	out = write(destinationFD, buf, in);
+	out = write(destinationFD, bufs, in);
 	if (out < 0){ 
 	 	break;
 		}
@@ -51,6 +60,13 @@ int cpFile(char* source, char* destination){
 	//printf(1,"END OF CP %d\n",in);
 	close(sourceFD);
 	close(destinationFD);
+	return 1;
+}
+int cpHardLink (char* source, char* destination){
+	if(link(source,destination)){
+		printf(1,"cp failed to perform copy operation from %s to %s\n",source,destination);
+		return 0;
+	}
 	return 1;
 }
 int cpAll(char* source, char* destination, int mode){
@@ -85,7 +101,7 @@ char buf[512], *p,tempDes[1000];
 			memmove(p, de.name, DIRSIZ);
 			p[DIRSIZ] = 0;
 			if(stat(buf, &st) < 0){
-				printf(1, "cp: cannot stat %s\n", buf);
+				printf(2, "cp: cannot stat %s\n", buf);
 				continue;
 			}
 		//printf(1, "%s %d %d %d %s\n", fmtname(buf), st.type, st.ino, st.size, buf);
@@ -95,13 +111,14 @@ char buf[512], *p,tempDes[1000];
 		//printf(1,"Skipped %s\n",temp);
 				continue;
 			} 
-		//printf(1,"%s\n",buf);
+			printf(1,"%s\n",buf);
 			strcpy(tempDes,destination);
 			strcats(tempDes,"/");
 			strcats(tempDes,temp);
 			//printf(1,"%s\n",tempDes);
 			if(st.type == T_FILE){
-				cpFile(buf,tempDes);
+				//cpFile(buf,tempDes);
+				cpHardLink(buf,tempDes);
 			}else if(mode == 1){
 				cpAll(buf,tempDes,mode);
 			}

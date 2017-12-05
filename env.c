@@ -10,5 +10,5 @@ int main(int argc, char *argv[]){
         printf(1,"%s\n",envp[i]);
     }
     //printf(1,"Avaiable env %d\n",i);
-    return 0;
+    exit();
 }

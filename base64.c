@@ -75,7 +75,7 @@ int main(int argc, char *argv[]){
     Decode64("Q2FsbGFzLCBKLiwgRG9ubmVyaGFja2UsIEwuLCBGaW5uZXksIEguLCBhbmQgUi4gVGhheWVyLA==");
     */
     free(bufferInput);
-    return 0;
+    exit();
 }
 void Encode64(char* data, int lengths){
     char* binaryBuffer = ToBinary(data,lengths,8);
