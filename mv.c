@@ -40,12 +40,12 @@ int moveAll(char* source, char* destination){
   mkdir(destination);
   chdir(destination);
   if((fd = open(source, 0)) < 0){
-    printf(2, "ls: cannot open %s\n", source);
+    printf(2, "mv: cannot open %s\n", source);
     return 0;
   }
 
   if(fstat(fd, &st) < 0){
-    printf(2, "ls: cannot stat %s\n", source);
+    printf(2, "mv: cannot stat %s\n", source);
     close(fd);
     return 0;
   }
