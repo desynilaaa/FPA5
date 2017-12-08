@@ -3,6 +3,7 @@
 #include "user.h"
 #include "fcntl.h"
 #include "fs.h"
+
 char* strcats(char* destination, char* source){
   int indexs = strlen(destination);
   int i;
@@ -82,7 +83,8 @@ int removeAll(char* source){
 }
 int main(int argc, char *argv[])
 {
-  int i;
+  int i, fdir;
+
   if(argc < 2){
     printf(1, "rm require 1 atleast arguments [filename]\n");
     exit();
@@ -98,10 +100,16 @@ int main(int argc, char *argv[])
     }
   }
   for(i = 1; i < argc; i++){
+    if((fdir = open(argv[i], 0)) < 0) {
+                close(fdir);
+                printf(2, "rm: cannot remove '%s': No such file or directory\n", argv[i]);
+                exit();
+        }
     if(unlink(argv[i]) < 0){
       printf(1, "rm failed to remove files\n", argv[i]);
       break;
     }
+   
   }
 
   exit();
